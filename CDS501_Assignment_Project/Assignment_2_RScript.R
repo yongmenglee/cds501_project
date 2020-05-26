@@ -104,7 +104,7 @@ summary(corona.multivar.lm)
 
 # Approach 2: Splitting data into dTrain and dTest
 # Step 0.1 - Split data into dTrain and dTest
-corona1$gp = runif(dim(corona1)[1])
+set.seed(0)corona1$gp = runif(dim(corona1)[1])
 head(corona1)
 
 test.size<- 0.1
@@ -219,3 +219,4 @@ rsq(dTest$bit_score, dTest$pred.mul.bit_score)
 rmse(dTrain$bit_score, dTrain$pred.mul.bit_score)
 rmse(dTest$bit_score, dTest$pred.mul.bit_score)
 # Output:: might be different across each run
+
