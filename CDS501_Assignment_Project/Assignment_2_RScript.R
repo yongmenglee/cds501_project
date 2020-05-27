@@ -138,18 +138,18 @@ summary(model.bivar)
 # 
 # Residuals:
 #   Min     1Q Median     3Q    Max 
-# -11700  -1349   2148   3463   6959 
+# -11157  -1221   2160   3468   7908 
 # 
 # Coefficients:
 #   Estimate Std. Error t value Pr(>|t|)    
-# (Intercept)      -4.222e+03  5.654e+02  -7.467 1.62e-12 ***
-#   alignment_length  1.755e+00  3.743e-02  46.894  < 2e-16 ***
+# (Intercept)      -4.172e+03  5.774e+02  -7.226 6.84e-12 ***
+#   alignment_length  1.722e+00  3.881e-02  44.360  < 2e-16 ***
 #   ---
 #   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 # 
-# Residual standard error: 6129 on 234 degrees of freedom
-# Multiple R-squared:  0.9038,	Adjusted R-squared:  0.9034 
-# F-statistic:  2199 on 1 and 234 DF,  p-value: < 2.2e-16
+# Residual standard error: 6272 on 236 degrees of freedom
+# Multiple R-squared:  0.8929,	Adjusted R-squared:  0.8925 
+# F-statistic:  1968 on 1 and 236 DF,  p-value: < 2.2e-16
 
 # Step 4 - Add regression line to the x/y scatter plot.
 abline(model.bivar, col = "blue")
