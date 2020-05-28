@@ -136,8 +136,8 @@ plot(dTrain$X.alignment.length., dTrain$X.bit.score.,
   title("bit_score vs alignment_length")
 
 # Step 2 - Create bivariate linear regression model
-model.bivar <- lm(X.bit.score. ~ X.alignment.length.,
-                  data = dTrain)
+model.bivar <- lm(X.bit.score. ~ X.alignment.length., data = dTrain)
+model.bivar
 
 # Step 3 - Summary report of the biviariate regression on training set
 summary(model.bivar)
@@ -165,34 +165,38 @@ abline(model.bivar, col = "blue")
 
 # Step 5 - Prediction on test set
 dTest$pred.bit.score. <- predict(model.bivar, newdata = dTest)
-dTrain$pred.bit.score. <- predict(model.bivar, newdata = dTrain)
+# dTrain$pred.bit.score. <- predict(model.bivar, newdata = dTrain)
 
 # Step 6 - Calculate R-Squared
 rsq(dTrain$X.bit.score., dTrain$pred.bit.score.)
 # Output::
 # [1] 0.8932972
-rsq(dTest$X.bit.score., dTest$pred.bit.score.)
-# Output::
-# [1] 0.8711599
 
 # Step 7 - Calculate RMSE
-rmse(dTrain$X.bit.score., dTrain$pred.bit.score.)
-# Output::
-# [1] 6281.083
 rmse(dTest$X.bit.score., dTest$pred.bit.score.)
 # Output::
 # [1] 6597.397
 
-ggplot(data = dTest, aes(x = pred.bit.score., y = X.bit.score.)) +
-  geom_point(alpha=0.2, color="black") +
-  geom_smooth(aes(x = pred.bit.score., y = X.bit.score.), color="black") +
-  geom_line(aes(x = X.bit.score., y = X.bit.score.), color="blue", linetype=2)
-
 
 # 2.2 Multivariate regression
+# Step 1 - Visualize variables for each feature with target on scatter plots.
+plot(dTrain$X.alignment.length., dTrain$X.bit.score.,
+     xlab = "alignment_length", ylab = "bit_score") +
+  title("bit_score vs alignment_length")
+cor(dTrain$X.alignment.length., dTrain$X.bit.score.)
+# Output::
+# [1] 0.945144
+
+plot(dTrain$X.alignment.length., dTrain$X.mismatches.,
+     xlab = "mismatches", ylab = "bit_score") +
+  title("bit_score vs mismatches")
+cor(dTrain$X.alignment.length., dTrain$X.mismatches.)
+# Output::
+# [1] 0.2043152
+
 # Step 1 - Create multivariate linear regression model
-model.multivar <- lm(X.bit.score. ~ X.pct.identity. + X.alignment.length. + X.gap.opens. + X.q.start.,
-                     data = dTrain)
+model.multivar <- lm(X.bit.score. ~ X.alignment.length. + X.mismatches., data = dTrain)
+model.multivar
 
 # Step 2 - Summary report of the multiviariate regression on training set
 summary(model.multivar)
@@ -221,22 +225,14 @@ summary(model.multivar)
 
 # Step 3 -  Prediction on test set
 dTest$pred.mul.bit.score.<- predict(model.multivar, newdata = dTest)
-dTrain$pred.mul.bit.score. <- predict(model.multivar, newdata = dTrain)
+# dTrain$pred.mul.bit.score. <- predict(model.multivar, newdata = dTrain)
 
 # Step 4 - Calculate R-squared
-rsq(dTrain$X.bit.score., dTrain$pred.mul.bit.score.)
-# Output::
-# [1] 0.9988608
 rsq(dTest$X.bit.score., dTest$pred.mul.bit.score.)
 # Output::
 # [1] 0.9906639
 
 # Step 5 - Calculate RMSE
-rmse(dTrain$X.bit.score., dTrain$pred.mul.bit.score.)
-# Output:: 
-# [1] 648.9944
 rmse(dTest$X.bit.score., dTest$pred.mul.bit.score.)
 # Output:: 
 # [1] 1775.943
-
-
