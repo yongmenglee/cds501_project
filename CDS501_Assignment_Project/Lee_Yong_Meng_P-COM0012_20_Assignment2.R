@@ -1,4 +1,5 @@
 # CDS501 Assignment 2
+# Group 3 - Coronavirus
 
 # Read data from CSV file
 corona <- read.table('MN997409.1-4NY0T82X016-Alignment-HitTable.csv', sep=',')
@@ -47,21 +48,43 @@ head(corona)
 # ------------------------------
 
 # - Part 1 - Cross Validation
-
-# 1.1 K-fold Cross Validation
-# - Waiting for Ameer's part.
-
-# 1.2 LOOCV (Leave-one-out Cross Validation)
-# Import "caret" package for LOOCV
+# Import "caret" package for Cross Validation
 install.packages("caret") 
 library(caret)
 
+# 1.1 K-fold Cross Validation
+# - Waiting for Ameer's part.
+# Define training control
+set.seed(123)
+train.control.kfold <- trainControl(method = "cv", number = 5)
+model.kfold <- train(X.bit.score. ~ X.alignment.length., data = corona, method = "lm", trControl = train.control.kfold)
+
+print(model.kfold)
+# Output::
+# Linear Regression 
+# 
+# 263 samples
+# 1 predictor
+# 
+# No pre-processing
+# Resampling: Cross-Validated (5 fold) 
+# Summary of sample sizes: 209, 212, 209, 211, 211 
+# Resampling results:
+#   
+#   RMSE      Rsquared  MAE     
+# 6320.651  0.891921  5080.146
+# 
+# Tuning parameter 'intercept' was held constant at a value of TRUE
+
+
+# 1.2 LOOCV (Leave-one-out Cross Validation)
+
 # Linear regression using LOOCV (X.alignment.length.)
-train.control <- trainControl(method = "LOOCV")
-modellm <- train(X.bit.score. ~ X.alignment.length., data = corona, method = "lm", trControl = train.control)
+train.control.loo <- trainControl(method = "LOOCV")
+model.loo <- train(X.bit.score. ~ X.alignment.length., data = corona, method = "lm", trControl = train.control.loo)
 
 # Print the outcome of loocv
-print(modellm)
+print(model.loo)
 # Output::
 # Linear Regression 
 # 
