@@ -1,0 +1,144 @@
+Please make sure to update all your R packages to the latest version.
+
+```{r}
+#Create distribution to check on the missing value
+# setwd("~/R Project")
+corona <- read.table('MN997409.1-4NY0T82X016-Alignment-HitTable.csv', sep=',')
+names(corona) <- c('query_acc.ver', 'subject_acc.ver', '%_identity', 
+                   'alignment_length', 'mismatches', 'gap_opens',
+                   'q.start', 'q.end', 's.start', 's.end', 'evalue', 'bit_score')
+summary(corona)
+
+#Calculate the correlation
+corona1 <- corona[, c(3,4,5,6,7,8,9,10,11,12)]
+m <- cor(corona1)
+# view(m)
+
+# #Plot histogram for each variale
+# install.packages("ggplot2")
+# install.packages("tidyr")
+```
+
+Let us plot the histogram
+
+```{r}
+
+# #specify size here
+# png("corona_hist_gather.png",height = 1080, width = 1440, res = 180)
+
+#Plot histogram for each variale
+# install.packages("ggplot2")
+# install.packages("tidyr")
+library(ggplot2)
+library(tidyr)
+
+# install.packages("repr")
+
+library(repr)
+
+# Change plot size to 8 x 4.5
+options(repr.plot.width=8, repr.plot.height=4.5)
+
+corona1 %>% gather() %>% head();
+histogram <- ggplot(gather(corona1), aes(value)) + geom_histogram(bins = 10) + facet_wrap(~key, scales = 'free_x')
+
+histogram
+
+# dev.off()
+
+```
+
+Now let us explore the correlation.
+
+```{r ggplot}
+# Change plot size to 10 x 8
+options(repr.plot.width=10, repr.plot.height=8)
+
+#Plot scatter matrix
+scatter <- pairs(corona1)
+
+# dev.off()
+
+```
+
+Generate scatter plot for 
+
+```{r}
+#Plot individual scatter 
+
+# install.packages("car") 
+
+
+options(repr.plot.width=6, repr.plot.height=4.5)
+
+library("car") 
+
+scatterplot(mismatches ~ gap_opens, data = corona) 
+
+scatterplot(s.start ~ q.start, data = corona) 
+
+scatterplot(s.end ~ q.end, data = corona) 
+
+scatterplot(corona$alignment_length ~ corona$bit_score, data = corona) 
+```
+
+```{r}
+# Generate lower and upper bounds using IQR rule
+# Calculate quartile 1 and 3 for all columns
+coronaQuantiles <- sapply(corona1, quantile, na.rm = TRUE)
+coronaQ1 <- coronaQuantiles[2,]
+coronaQ3 <- coronaQuantiles[4,]
+
+# Calculate lower and upper bounds to detect outlier for all columns
+coronaIQR <- sapply(corona1, IQR, na.rm = TRUE)
+coronaS = 1.5 * coronaIQR
+coronaLB = coronaQ1 - coronaS
+coronaUB = coronaQ3 + coronaS
+
+# Show lower and upper bounds for all columns
+corona.bounds <- data.frame(lower.bound = coronaLB, 
+                            upper.bound = coronaUB)
+corona.bounds
+```
+
+
+```{r}
+# Print columns and number of outliers below the lower bound (IQR rule).
+coronaMin <- coronaQuantiles[1,]
+
+for (i in 1:length(coronaLB)) {
+    if (coronaLB[[i]] > coronaMin[[i]]) {
+        col_name <- names(coronaLB)[i]
+        col_LB <- coronaLB[[i]]
+        
+        corona1belowLB <- corona1[which(corona1[col_name] < col_LB),][col_name]
+        print(paste0(col_name, ": ", nrow(corona1belowLB), " of ", nrow(corona1), " records"))
+    }
+}
+
+# Output:
+# [1] "q.end: 54 of 263 records"
+# [1] "s.end: 54 of 263 records"
+```
+
+
+```{r}
+# Print columns and number of outliers above the upper bound (IQR rule).
+coronaMax <- coronaQuantiles[5,]
+
+for (i in 1:length(coronaUB)) {
+    if (coronaUB[[i]] < coronaMax[[i]]) {
+        col_name <- names(coronaUB)[i]
+        col_UB <- coronaUB[[i]] 
+        
+        corona1aboveLB <- corona1[which(corona1[col_name] > col_UB),][col_name]
+        print(paste0(col_name, ": ", nrow(corona1aboveLB), " of ", nrow(corona1), " records"))
+    }
+}
+
+# Output:
+# [1] "mismatches: 54 of 263 records"
+# [1] "gap_opens: 53 of 263 records"
+# [1] "bit_score: 45 of 263 records"
+```
+
