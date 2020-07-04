@@ -5,20 +5,13 @@
 # ---
 # Read data from CSV file
 corona <- read.table('MN997409.1-4NY0T82X016-Alignment-HitTable.csv', header = TRUE, sep=',')
-
-# Add header to data frame
-# names(corona) <- c('X.query.acc.ver.', 'X.subject.acc.ver.', 'X.pct.identity.', 
-#                    'X.alignment.length.', 'X.mismatches.', 'X.gap.opens.',
-#                    'X.q.start.', 'X.q.end.', 'X.s.start.', 'X.s.end.', 'X.evalue.', 'X.bit.score.')
 summary(corona)
 
 # Remove columns with only one unique value:-
 # - 1. X.query.acc.ver.: MN997409.1:263 
 # - 11. X.evalue: 0
 corona <- corona[-c(1, 11)]
-# corona <- corona[-c(1, 8, 9, 10, 11)]
 summary(corona)
-
 
 # Hierarchical clustering
 
@@ -30,7 +23,7 @@ vars.to.use <- colnames(corona)[-1]
 
 # Transform data frame into a scaled matrix
 # - dist() function accepts parameter values in matrix form
-pmatrix <- scale(corona[,vars.to.use])
+pmatrix <- corona[,vars.to.use]
 
 # # Define pcenter: mean value of each column
 # pcenter <- attr(pmatrix, "scaled:center") 
@@ -38,7 +31,7 @@ pmatrix <- scale(corona[,vars.to.use])
 # pscale <- attr(pmatrix, "scaled:scale") 
 
 # Create distance matrix
-d <- dist(pmatrix, method="euclidean") 
+d <- dist(pmatrix, method="euclidean")
 
 # Part 2: Perform hierarchical clustering
 # ---
@@ -91,7 +84,7 @@ plot_hclust_pc <- function(pmat, nComp, groups, subject, method.name = NA) {
 # "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA),
 # "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC).
 hclustMethod <- "ward.D"
-num.k <- 5
+num.k <- 4
 
 pfit <- hclust(d, method = hclustMethod)
 plot_hclust(pfit, num.k)
@@ -105,7 +98,7 @@ plot_hclust(hclust(d, method = "mcquitty"), num.k)
 
 # Visualizing hierarchical clustering
 # Define list of cluster labels
-pMethod <- "average"
+pMethod <- "ward.D"
 
 pfit2 <- hclust(d, method = pMethod)
 groups <- cutree(pfit2, k = num.k)
@@ -226,8 +219,8 @@ fviz_pca_ind(princ,
 # Import fpc library for clusterboot() function
 library(fpc)
 
-kbest.p <- 5
-hclustMethod <- "ward.D"
+kbest.p <- 4
+hclustMethod <- "ward.D2"
 
 # Note: invisible(capture.output()) is used to suppress output
 invisible(capture.output(cboot.hclust <- clusterboot(pmatrix, 
