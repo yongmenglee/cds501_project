@@ -6,4 +6,4 @@ This is **bold**.
 
 This is *italic*.
 
-This is [link to top](#Hello-World).
+This is [link to top](#hello-world).
